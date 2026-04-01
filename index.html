@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <title>温柔康护 | 控糖+治疗 Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #fefcf8;
+        color: #2c2c2c;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(180deg, #fffefd 0%, #f7f1ec 60%);
+      }
+      #root {
+        width: 100%;
+      }
+      .page {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 24px 16px 40px;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .headline {
+        font-size: 1.9rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .subhead {
+        font-size: 1rem;
+        color: #6c5a4d;
+        line-height: 1.6;
+      }
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin: 24px 0;
+      }
+      .status-card {
+        background: #fffef9;
+        border-radius: 16px;
+        border: 1px solid #f2e2cf;
+        padding: 18px;
+        min-height: 130px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
+      }
+      .status-card span.label {
+        display: block;
+        font-size: 0.9rem;
+        color: #8b6b52;
+      }
+      .status-card span.value {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: #3c2c1e;
+        margin-top: 4px;
+      }
+      .card-extra {
+        font-size: 0.9rem;
+        color: #5b4b3b;
+        margin-top: 6px;
+      }
+      .grid-two {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+      }
+      @media (min-width: 900px) {
+        .grid-two {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .panel {
+        background: #fff;
+        border-radius: 18px;
+        border: 1px solid #f0e5d4;
+        padding: 20px;
+        box-shadow: 0 18px 35px rgba(60, 50, 30, 0.08);
+      }
+      .panel h2 {
+        margin: 0 0 12px;
+        font-size: 1.2rem;
+      }
+      .record-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .record-item {
+        padding: 12px 0;
+        border-bottom: 1px solid #f4ebe2;
+      }
+      .record-item:last-child {
+        border-bottom: none;
+      }
+      .record-item strong {
+        display: inline-block;
+        width: 80px;
+        font-size: 1.1rem;
+      }
+      .record-meta {
+        font-size: 0.95rem;
+        color: #6c5a4d;
+      }
+      .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .form-field {
+        flex: 1 1 140px;
+        display: flex;
+        flex-direction: column;
+        font-size: 0.9rem;
+        color: #4e3a2f;
+      }
+      .form-field label {
+        margin-bottom: 6px;
+      }
+      input,
+      select,
+      textarea {
+        padding: 10px 12px;
+        font-size: 1rem;
+        border-radius: 10px;
+        border: 1px solid #dcd5c8;
+        background: #fffdf8;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 60px;
+      }
+      .status-card .secondary-btn {
+        margin-top: 12px;
+        width: 100%;
+        border: 1px solid #f3cba8;
+        background: transparent;
+        color: #a3603c;
+        border-radius: 10px;
+        padding: 8px 0;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .status-card .secondary-btn:hover {
+        background: #fff5ec;
+      }
+      .treatment-editor {
+        margin-bottom: 16px;
+      }
+      .ghost-btn {
+        margin-left: 12px;
+        border: 1px solid #d8c3b0;
+        background: #fff;
+        color: #7a5c48;
+        font-size: 0.95rem;
+        padding: 12px 16px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      .primary-btn {
+        margin-top: 4px;
+        border: none;
+        background: linear-gradient(135deg, #fe7f58, #f19c5a);
+        color: #fff;
+        font-size: 1rem;
+        padding: 14px 16px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        box-shadow: 0 6px 20px rgba(244, 143, 76, 0.4);
+      }
+      .primary-btn:disabled {
+        background: #f2cdb3;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      .note-block {
+        font-size: 0.9rem;
+        color: #8c7562;
+        margin-top: 8px;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        background: #fff6e8;
+        color: #86552f;
+        padding: 4px 12px;
+        font-size: 0.85rem;
+        border: 1px solid #ffe2c0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script>
+      const { useState, useMemo, useEffect } = React;
+      const STORAGE_KEY = "health-dashboard-glucose";
+      const TREATMENT_STORAGE_KEY = "health-dashboard-treatment";
+      const MEDICATION_STORAGE_KEY = "health-dashboard-medication";
+      function nowIso() {
+        const now = new Date();
+
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+      const initialRecords = [
+        {
+          value: 5.6,
+          type: "空腹",
+          time: "2026-03-30 07:30",
+          note: "起床后测量"
+        },
+        {
+          value: 7.8,
+          type: "餐后",
+          time: "2026-03-30 12:40",
+          note: "午餐后1小时"
+        },
+        {
+          value: 6.9,
+          type: "睡前",
+          time: "2026-03-29 21:10",
+          note: "轻轻散步后"
+        }
+      ];
+      const initialTreatmentSchedule = {
+        date: "2026-04-01",
+        time: "09:00",
+        type: "放疗",
+        location: "市中心肿瘤医院放疗一号厅"
+      };
+      const initialMedicationTasks = [
+        { id: 1, name: "早餐后药", time: "08:00", completed: false },
+        { id: 2, name: "午餐后药", time: "13:00", completed: false },
+        { id: 3, name: "晚餐后药", time: "19:00", completed: false },
+        { id: 4, name: "睡前药", time: "22:00", completed: false }
+      ];
+      function App() {
+        const [records, setRecords] = useState(initialRecords);
+        const [form, setForm] = useState({
+          value: "",
+          type: "空腹",
+          time: nowIso(),
+          note: ""
+        });
+        useEffect(() => {
+          const stored = window.localStorage.getItem(STORAGE_KEY);
+          if (stored) {
+            try {
+              const parsed = JSON.parse(stored);
+              if (Array.isArray(parsed)) {
+                setRecords(parsed);
+                return;
+              }
+            } catch (error) {
+              console.warn("无法解析本地血糖记录", error);
+            }
+          }
+          setRecords(initialRecords);
+        }, []);
+        const [treatmentSchedule, setTreatmentSchedule] = useState(
+          initialTreatmentSchedule
+        );
+        const [treatmentDraft, setTreatmentDraft] = useState(
+          initialTreatmentSchedule
+        );
+        const [editingTreatment, setEditingTreatment] = useState(false);
+        const [medicationTasks, setMedicationTasks] = useState(initialMedicationTasks);
+        const [medicationDraft, setMedicationDraft] = useState({ id: null, name: '', time: '08:00', completed: false });
+        const [editingMedicationId, setEditingMedicationId] = useState(null);
+        const [addingMedication, setAddingMedication] = useState(false);
+        const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+        const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+        const today = new Date().toISOString().slice(0, 10);
+        useEffect(() => {
+          const stored = window.localStorage.getItem(TREATMENT_STORAGE_KEY);
+          if (stored) {
+            try {
+              const parsed = JSON.parse(stored);
+              if (parsed && typeof parsed === 'object') {
+                setTreatmentSchedule(parsed);
+                return;
+              }
+            } catch (error) {
+              console.warn("无法解析本地治疗计划数据", error);
+            }
+          }
+          setTreatmentSchedule(initialTreatmentSchedule);
+        }, []);
+        useEffect(() => {
+          const stored = window.localStorage.getItem(MEDICATION_STORAGE_KEY);
+          if (stored) {
+            try {
+              const parsed = JSON.parse(stored);
+              if (Array.isArray(parsed)) {
+                setMedicationTasks(parsed);
+                return;
+              }
+            } catch (error) {
+              console.warn("无法解析本地用药任务数据", error);
+            }
+          }
+          setMedicationTasks(initialMedicationTasks);
+        }, []);
+        const todayRecords = useMemo(
+          () => records.filter((item) => item.time.startsWith(today)),
+          [records, today]
+        );
+        const handleChange = (field, value) => {
+          setForm((prev) => ({ ...prev, [field]: value }));
+        };
+        const resetForm = () => {
+          setForm((prev) => ({
+            value: "",
+            type: prev.type,
+            time: nowIso(),
+            note: ""
+          }));
+        };
+
+        const addRecord = (event) => {
+          event.preventDefault();
+          if (!form.value || !form.time) return;
+          const next = {
+            value: parseFloat(form.value),
+            type: form.type,
+            time: form.time.replace("T", " "),
+            note: form.note
+          };
+          setRecords((prev) => {
+            const updated = [next, ...prev];
+            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+            return updated;
+          });
+          resetForm();
+        };
+        const startEditing = () => {
+          setTreatmentDraft(treatmentSchedule);
+          setEditingTreatment(true);
+        };
+        const handleTreatmentChange = (field, value) => {
+          setTreatmentDraft((prev) => ({ ...prev, [field]: value }));
+        };
+        const saveTreatment = (event) => {
+          event.preventDefault();
+          setTreatmentSchedule(treatmentDraft);
+          try {
+            window.localStorage.setItem(TREATMENT_STORAGE_KEY, JSON.stringify(treatmentDraft));
+          } catch (error) {
+            console.warn("无法保存治疗计划到本地存储", error);
+          }
+          setEditingTreatment(false);
+        };
+        const markMedicationComplete = (id) => {
+          setMedicationTasks((prev) => {
+            const updated = prev.map(task => 
+              task.id === id ? { ...task, completed: !task.completed } : task
+            );
+            try {
+              window.localStorage.setItem(MEDICATION_STORAGE_KEY, JSON.stringify(updated));
+            } catch (error) {
+              console.warn("无法保存用药任务到本地存储", error);
+            }
+            return updated;
+          });
+        };
+        const startAddingMedication = () => {
+          setMedicationDraft({ id: null, name: '', time: '08:00', completed: false });
+          setEditingMedicationId(null);
+          setAddingMedication(true);
+        };
+        const startEditingMedication = (task) => {
+          setMedicationDraft({ ...task });
+          setEditingMedicationId(task.id);
+          setAddingMedication(false);
+        };
+        const handleMedicationChange = (field, value) => {
+          setMedicationDraft((prev) => ({ ...prev, [field]: value }));
+        };
+        const saveMedication = (event) => {
+          event.preventDefault();
+          if (!medicationDraft.name || !medicationDraft.time) return;
+          setMedicationTasks((prev) => {
+            let updated;
+            if (editingMedicationId) {
+              // 编辑现有药品
+              updated = prev.map(task => 
+                task.id === editingMedicationId ? medicationDraft : task
+              );
+            } else {
+              // 新增药品
+              const newId = Math.max(...prev.map(task => task.id), 0) + 1;
+              updated = [...prev, { ...medicationDraft, id: newId }];
+            }
+            try {
+              window.localStorage.setItem(MEDICATION_STORAGE_KEY, JSON.stringify(updated));
+            } catch (error) {
+              console.warn("无法保存用药任务到本地存储", error);
+            }
+            return updated;
+          });
+          setAddingMedication(false);
+          setEditingMedicationId(null);
+        };
+        const deleteMedication = (id) => {
+          if (window.confirm('确定要删除这个药品吗？')) {
+            setMedicationTasks((prev) => {
+              const updated = prev.filter(task => task.id !== id);
+              try {
+                window.localStorage.setItem(MEDICATION_STORAGE_KEY, JSON.stringify(updated));
+              } catch (error) {
+                console.warn("无法保存用药任务到本地存储", error);
+              }
+              return updated;
+            });
+          }
+        };
+        const cancelMedicationEdit = () => {
+          setAddingMedication(false);
+          setEditingMedicationId(null);
+        };
+        const generateCalendarDays = (month, year) => {
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          const firstDayOfMonth = new Date(year, month, 1).getDay();
+          const days = [];
+          
+          // 添加上个月的日期
+          for (let i = firstDayOfMonth - 1; i >= 0; i--) {
+            const date = new Date(year, month, -i);
+            days.push({
+              date: date,
+              day: date.getDate(),
+              month: date.getMonth(),
+              year: date.getFullYear(),
+              isCurrentMonth: false
+            });
+          }
+          
+          // 添加当前月的日期
+          for (let i = 1; i <= daysInMonth; i++) {
+            const date = new Date(year, month, i);
+            days.push({
+              date: date,
+              day: i,
+              month: month,
+              year: year,
+              isCurrentMonth: true
+            });
+          }
+          
+          // 添加下个月的日期，使日历完整显示6行7列
+          const remainingDays = 42 - days.length;
+          for (let i = 1; i <= remainingDays; i++) {
+            const date = new Date(year, month + 1, i);
+            days.push({
+              date: date,
+              day: date.getDate(),
+              month: date.getMonth(),
+              year: date.getFullYear(),
+              isCurrentMonth: false
+            });
+          }
+          
+          return days;
+        };
+        const calendarDays = generateCalendarDays(currentMonth, currentYear);
+        return (
+          React.createElement("div", { className: "page" },
+            React.createElement("header", { className: "header" },
+              React.createElement("div", { className: "headline" }, "温柔康护 · 治疗+控糖看板"),
+              React.createElement("p", { className: "subhead" },
+                "为正在接受化疗/放疗且需控糖的亲属提供清晰、可执行的每日记录，让家人能快速掌握治疗进度。"
+              )
+            ),
+            React.createElement("section", { className: "panel", style: { marginBottom: "24px" } },
+              React.createElement("h2", { style: { marginBottom: "16px" } }, "治疗日历"),
+              React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" } },
+                React.createElement("h3", { style: { margin: 0, fontSize: "1.1rem" } },
+                  `${currentYear}年${currentMonth + 1}月`
+                ),
+                React.createElement("div", { style: { display: "flex", gap: "8px" } },
+                  React.createElement("button", {
+                    type: "button",
+                    className: "ghost-btn",
+                    style: { padding: "6px 12px", fontSize: "0.85rem" },
+                    onClick: () => {
+                      if (currentMonth === 0) {
+                        setCurrentMonth(11);
+                        setCurrentYear(currentYear - 1);
+                      } else {
+                        setCurrentMonth(currentMonth - 1);
+                      }
+                    }
+                  }, "上月"),
+                  React.createElement("button", {
+                    type: "button",
+                    className: "ghost-btn",
+                    style: { padding: "6px 12px", fontSize: "0.85rem" },
+                    onClick: () => {
+                      if (currentMonth === 11) {
+                        setCurrentMonth(0);
+                        setCurrentYear(currentYear + 1);
+                      } else {
+                        setCurrentMonth(currentMonth + 1);
+                      }
+                    }
+                  }, "下月")
+                )
+              ),
+              React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "8px" } },
+                React.createElement("div", { style: { textAlign: "center", fontWeight: "600", fontSize: "0.9rem", color: "#8b6b52" } }, "日"),
+                React.createElement("div", { style: { textAlign: "center", fontWeight: "600", fontSize: "0.9rem", color: "#8b6b52" } }, "一"),
+                React.createElement("div", { style: { textAlign: "center", fontWeight: "600", fontSize: "0.9rem", color: "#8b6b52" } }, "二"),
+                React.createElement("div", { style: { textAlign: "center", fontWeight: "600", fontSize: "0.9rem", color: "#8b6b52" } }, "三"),
+                React.createElement("div", { style: { textAlign: "center", fontWeight: "600", fontSize: "0.9rem", color: "#8b6b52" } }, "四"),
+                React.createElement("div", { style: { textAlign: "center", fontWeight: "600", fontSize: "0.9rem", color: "#8b6b52" } }, "五"),
+                React.createElement("div", { style: { textAlign: "center", fontWeight: "600", fontSize: "0.9rem", color: "#8b6b52" } }, "六")
+              ),
+              React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "8px", marginTop: "8px" } },
+                calendarDays.map((day, index) => {
+                  const isToday = day.date.toISOString().slice(0, 10) === today;
+                  const isTreatmentDay = day.date.toISOString().slice(0, 10) === treatmentSchedule.date;
+                  
+                  return React.createElement("div", {
+                    key: index,
+                    style: {
+                      textAlign: "center",
+                      padding: "12px 8px",
+                      borderRadius: "8px",
+                      backgroundColor: isToday ? "#fff6e8" : isTreatmentDay ? "#ffe2c0" : day.isCurrentMonth ? "#fff" : "#f9f6f2",
+                      border: isTreatmentDay ? "1px solid #fe7f58" : "1px solid #f4ebe2",
+                      color: day.isCurrentMonth ? "#2c2c2c" : "#c4b4a4",
+                      position: "relative"
+                    }
+                  }, [
+                    React.createElement("div", { key: "day", style: { fontSize: "1rem", fontWeight: isToday ? "600" : "normal" } }, day.day),
+                    isTreatmentDay && React.createElement("div", { key: "treatment", style: { fontSize: "0.7rem", marginTop: "4px", color: "#a3603c" } }, treatmentSchedule.type)
+                  ]);
+                })
+              )
+            ),
+            React.createElement("section", { className: "status-grid" },
+              React.createElement("article", { className: "status-card" },
+                React.createElement("span", { className: "label" }, "下一次治疗"),
+                React.createElement("span", { className: "value" },
+                  `${treatmentSchedule.date} ${treatmentSchedule.time}`
+                ),
+                React.createElement("p", { className: "card-extra" },
+                  React.createElement("span", null, treatmentSchedule.type),
+                  " · ",
+                  React.createElement("span", null, treatmentSchedule.location)
+                ),
+                React.createElement("button", {
+                  type: "button",
+                  className: "secondary-btn",
+                  onClick: startEditing
+                }, "编辑")
+              ),
+              React.createElement("article", { className: "status-card" },
+                React.createElement("span", { className: "label" }, "今日血糖记录次数"),
+                React.createElement("span", { className: "value" }, todayRecords.length),
+                React.createElement("p", { className: "card-extra" },
+                  React.createElement("span", { className: "pill" }, today)
+                )
+              ),
+
+            ),
+            editingTreatment &&
+              React.createElement("section", { className: "panel treatment-editor" },
+                React.createElement("h2", null, "编辑下一次治疗"),
+                React.createElement("form", { onSubmit: saveTreatment },
+                  React.createElement("div", { className: "form-row" },
+                    React.createElement("label", { className: "form-field" },
+                      "治疗日期",
+                      React.createElement("input", {
+                        type: "date",
+                        value: treatmentDraft.date,
+                        onChange: (ev) => handleTreatmentChange("date", ev.target.value)
+                      })
+                    ),
+                    React.createElement("label", { className: "form-field" },
+                      "治疗时间",
+                      React.createElement("input", {
+                        type: "time",
+                        value: treatmentDraft.time,
+                        onChange: (ev) => handleTreatmentChange("time", ev.target.value)
+                      })
+                    )
+                  ),
+                  React.createElement("div", { className: "form-row" },
+                    React.createElement("label", { className: "form-field" },
+                      "治疗类型",
+                      React.createElement("select", {
+                        value: treatmentDraft.type,
+                        onChange: (ev) => handleTreatmentChange("type", ev.target.value)
+                      },
+                        React.createElement("option", { value: "放疗" }, "放疗"),
+                        React.createElement("option", { value: "化疗" }, "化疗"),
+                        React.createElement("option", { value: "复诊" }, "复诊")
+                      )
+                    ),
+                    React.createElement("label", { className: "form-field" },
+                      "地点",
+                      React.createElement("input", {
+                        type: "text",
+                        value: treatmentDraft.location,
+                        onChange: (ev) => handleTreatmentChange("location", ev.target.value)
+                      })
+                    )
+                  ),
+                  React.createElement("div", null,
+                    React.createElement("button", {
+                      type: "submit",
+                      className: "primary-btn"
+                    }, "保存"),
+                    React.createElement("button", {
+                      type: "button",
+                      className: "ghost-btn",
+                      onClick: () => setEditingTreatment(false)
+                    }, "取消")
+                  )
+                )
+              ),
+            React.createElement("div", { className: "grid-two" },
+              React.createElement("section", { className: "panel" },
+                React.createElement("h2", null, "最近血糖记录"),
+                React.createElement("ul", { className: "record-list" },
+                  records.map((item, index) =>
+                    React.createElement("li", { key: index, className: "record-item" },
+                      React.createElement("strong", null, `${item.value} mmol/L`),
+                      React.createElement("div", { className: "record-meta" },
+                        React.createElement("span", null, item.type),
+                        " · ",
+                        React.createElement("span", null, item.time),
+                        item.note && React.createElement("span", null, " · ", item.note)
+                      )
+                    )
+                  )
+                )
+              ),
+              React.createElement("section", { className: "panel" },
+                React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" } },
+                  React.createElement("h2", null, "今日用药任务"),
+                  React.createElement("button", {
+                    type: "button",
+                    className: "primary-btn",
+                    style: { padding: "8px 16px", fontSize: "0.9rem" },
+                    onClick: startAddingMedication
+                  }, "新增药品")
+                ),
+                React.createElement("ul", { className: "record-list" },
+                  medicationTasks.map((task) =>
+                    React.createElement("li", { key: task.id, className: "record-item" },
+                      React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" } },
+                        React.createElement("div", null,
+                          React.createElement("strong", null, task.name),
+                          React.createElement("div", { className: "record-meta" },
+                            React.createElement("span", null, task.time)
+                          )
+                        ),
+                        React.createElement("div", { style: { display: "flex", gap: "8px" } },
+                          React.createElement("button", {
+                            type: "button",
+                            className: `primary-btn ${task.completed ? 'completed' : ''}`,
+                            style: {
+                              backgroundColor: task.completed ? '#8c7562' : '',
+                              boxShadow: task.completed ? 'none' : '',
+                              padding: '8px 16px',
+                              fontSize: '0.9rem'
+                            },
+                            onClick: () => markMedicationComplete(task.id)
+                          }, task.completed ? '已完成' : '标记完成'),
+                          React.createElement("button", {
+                            type: "button",
+                            className: "ghost-btn",
+                            style: { padding: '8px 16px', fontSize: '0.9rem' },
+                            onClick: () => startEditingMedication(task)
+                          }, "编辑"),
+                          React.createElement("button", {
+                            type: "button",
+                            className: "ghost-btn",
+                            style: { 
+                              padding: '8px 16px', 
+                              fontSize: '0.9rem',
+                              color: '#a3603c',
+                              borderColor: '#f3cba8'
+                            },
+                            onClick: () => deleteMedication(task.id)
+                          }, "删除")
+                        )
+                      )
+                    )
+                  )
+                ),
+                React.createElement("div", { style: { marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #f4ebe2', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+                  React.createElement("span", { className: "note-block" }, "今日服药完成情况"),
+                  React.createElement("span", { style: { fontSize: '1.1rem', fontWeight: '600', color: '#3c2c1e' } },
+                    `${medicationTasks.filter(task => task.completed).length}/${medicationTasks.length}`
+                  )
+                ),
+                ((addingMedication || editingMedicationId) &&
+                  React.createElement("div", { style: { marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #f4ebe2' } },
+                    React.createElement("h3", { style: { margin: '0 0 12px', fontSize: '1rem' } }, editingMedicationId ? "编辑药品" : "新增药品"),
+                    React.createElement("form", { onSubmit: saveMedication },
+                      React.createElement("div", { className: "form-row" },
+                        React.createElement("label", { className: "form-field" },
+                          "药品名称",
+                          React.createElement("input", {
+                            type: "text",
+                            value: medicationDraft.name,
+                            onChange: (ev) => handleMedicationChange("name", ev.target.value),
+                            placeholder: "请输入药品名称"
+                          })
+                        ),
+                        React.createElement("label", { className: "form-field" },
+                          "吃药时间",
+                          React.createElement("input", {
+                            type: "time",
+                            value: medicationDraft.time,
+                            onChange: (ev) => handleMedicationChange("time", ev.target.value)
+                          })
+                        )
+                      ),
+                      React.createElement("div", { style: { marginTop: '12px' } },
+                        React.createElement("button", {
+                          type: "submit",
+                          className: "primary-btn",
+                          style: { padding: '10px 20px', fontSize: '0.95rem' }
+                        }, "保存"),
+                        React.createElement("button", {
+                          type: "button",
+                          className: "ghost-btn",
+                          style: { marginLeft: '12px', padding: '10px 20px', fontSize: '0.95rem' },
+                          onClick: cancelMedicationEdit
+                        }, "取消")
+                      )
+                    )
+                  )
+                )
+              ),
+              React.createElement("section", { className: "panel" },
+                React.createElement("h2", null, "新增血糖记录"),
+                React.createElement("form", { onSubmit: addRecord },
+                  React.createElement("div", { className: "form-row" },
+                    React.createElement("label", { className: "form-field" },
+                      "血糖值",
+                      React.createElement("input", {
+                        type: "number",
+                        step: "0.1",
+                        min: "2",
+                        max: "30",
+                        placeholder: "例 6.5",
+                        value: form.value,
+                        onChange: (ev) => handleChange("value", ev.target.value)
+                      })
+                    ),
+                    React.createElement("label", { className: "form-field" },
+                      "记录类型",
+                      React.createElement("select", {
+                        value: form.type,
+                        onChange: (ev) => handleChange("type", ev.target.value)
+                      },
+                        React.createElement("option", { value: "空腹" }, "空腹"),
+                        React.createElement("option", { value: "餐后" }, "餐后"),
+                        React.createElement("option", { value: "睡前" }, "睡前")
+                      )
+                    )
+                  ),
+                  React.createElement("div", { className: "form-row" },
+                    React.createElement("label", { className: "form-field" },
+                      "时间",
+                        React.createElement("input", {
+                          type: "datetime-local",
+                          value: form.time,
+                          onChange: (ev) => handleChange("time", ev.target.value)
+                        })
+                    )
+                  ),
+                  React.createElement("div", { className: "form-field" },
+                    React.createElement("label", null, "备注"),
+                    React.createElement("textarea", {
+                      placeholder: "可写下服药、运动或饮食情况",
+                      value: form.note,
+                      onChange: (ev) => handleChange("note", ev.target.value)
+                    })
+                  ),
+                  React.createElement("button", {
+                    type: "submit",
+                    className: "primary-btn",
+                    disabled: !form.value
+                  }, "保存并刷新")
+                ),
+                React.createElement("p", { className: "note-block" }, "记录后列表与首页统计即刻更新，确保家人能看见最新数据。")
+              )
+            )
+          )
+        );
+      }
+      ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+    </script>
+  </body>
+</html>
